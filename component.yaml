@@ -1,0 +1,15 @@
+name: KFP Test
+description: Performs some dummy work.
+
+inputs:
+- {name: output uri, type: GCSPath, description: 'GCS path to Input 1'}
+outputs:
+- {name: Output 1 URI, type: GCSPath, description: 'GCS path for Output 1'}
+implementation:
+  container:
+    image: gcr.io/erwinh-mldemo/kfp-test@sha256:b25218416db4312f4f8a2a7249ae6c1c2f0ca5de0913ddb8ae95a8a24e74d1bf
+    command: [
+      python3, /app/trainer/task.py,
+      --pathoutput, {inputValue: output uri},
+      --output1-path-file, {outputPath: Output 1 URI},
+    ]
