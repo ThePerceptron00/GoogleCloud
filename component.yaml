@@ -1,0 +1,18 @@
+
+name: KFP - Test Component
+description: Take input and write to a file
+inputs:
+- {name: pathoutput, type: GCSPath, description='gcs path to where to output model'} # The default values must be specified as YAML strings.
+outputs:
+- {name: pathoutput, type: GCSPath, description='GCS path for Output 1'} 
+
+implementation:
+implementation:
+  container:
+    image: gcr.io/erwinh-mldemo/kfp-test@sha256:b25218416db4312f4f8a2a7249ae6c1c2f0ca5de0913ddb8ae95a8a24e74d1bf
+    command: [
+      python3, /pipelines/component/src/program.py,
+      --pathoutput, {inputValue: output_model_uri},
+
+      --output1-path-file, {outputPath: pathoutput},
+    ]
