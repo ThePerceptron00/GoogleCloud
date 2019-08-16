@@ -1,0 +1,12 @@
+name: KFP Test
+description: Performs some dummy work.
+
+inputs:
+- {name: name, type: String, description: 'GCS path to Input 1'}
+implementation:
+  container:
+    image: gcr.io/erwinh-mldemo/kfp-test/component2@sha256:e4a3b6004dbfb6128d8c0a0e1ca48f52b0f3913fb56b65d9a4c0e36a004fa9ed
+    command: [
+      python3, /app/src/task.py,
+      --name, {inputValue: name},
+    ]
