@@ -73,6 +73,3 @@ If the model performance is good we can go and use the trained model to get pred
     GROUP BY country
     ORDER BY total_predicted_purchases DESC
     LIMIT 10;
-
-### Extra exercise predict using Tensorflow model
-This is an extra exercise. First 
