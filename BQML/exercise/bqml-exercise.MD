@@ -7,7 +7,7 @@ This is an BigQuery Machine Learning (BQML). In this exercise you will have to:
 - Predict on new data using the trained BQML model. 
 
 ### Explore the Data
-First navigate to the [console](https://www.console.cloud.google.com) -> BigQuery. This will take you to the BigQuery editor from where you can write your SQL. We will be using a public Google Analytics dataset:
+First navigate to the console (https://www.console.cloud.google.com) -> BigQuery. This will take you to the BigQuery editor from where you can write your SQL. We will be using a public Google Analytics dataset:
 
     bigquery-public-data.google_analytics_sample.ga_sessions_*`
 
