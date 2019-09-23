@@ -7,7 +7,7 @@ This is an BigQuery Machine Learning (BQML). In this exercise you will have to:
 - Predict on new data using the trained BQML model. 
 
 ### Explore the Data
-First navigate to the [console](console.cloud.google.com) -> BigQuery. This will take you to the BigQuery editor from where you can write your SQL. We will be using a public Google Analytics dataset:
+First navigate to the [console](https://www.console.cloud.google.com) -> BigQuery. This will take you to the BigQuery editor from where you can write your SQL. We will be using a public Google Analytics dataset:
 
     bigquery-public-data.google_analytics_sample.ga_sessions_*`
 
@@ -21,7 +21,7 @@ If your not sure what to write use the following statement as  starting point:
     LIMIT 100
 
 ### Train BigQuery Model
-Now we can train a model using the Google Analytics dataset. Have a look at the [documentation]() to figure out how you can use SQL to train the model. Make sure you use the following SELECT statement as the foundation of your statement:
+Now we can train a model using the Google Analytics dataset. Have a look at the [documentation](https://cloud.google.com/bigquery/docs/) to figure out how you can use SQL to train the model. Make sure you use the following SELECT statement as the foundation of your statement:
 
     SELECT
         IF(totals.transactions IS NULL, 0, 1) AS label,
