@@ -21,7 +21,7 @@ If your not sure what to write use the following statement as  starting point:
     LIMIT 100
 
 ### Train BigQuery Model
-Now we can train a model using the Google Analytics dataset. Have a look at the [documentation](https://cloud.google.com/bigquery/docs/) to figure out how you can use SQL to train the model. Make sure you use the following SELECT statement as the foundation of your statement:
+Now we can train a model using the Google Analytics dataset. Have a look at the BigQuery Machine Learning documentation to figure out how you can use SQL to train the model. Make sure you use the following SELECT statement as the foundation of your statement:
 
     SELECT
         IF(totals.transactions IS NULL, 0, 1) AS label,
