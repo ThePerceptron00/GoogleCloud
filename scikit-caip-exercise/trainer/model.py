@@ -1,7 +1,7 @@
 import functools
 
 import numpy as np
-from sklearn import compose
+import sklearn
 from sklearn import ensemble
 from sklearn import impute
 from sklearn import pipeline
