@@ -6,6 +6,5 @@ In this repo you can find different Machine Learning examples and exercises that
 - BigQuery Machine Learning examples and exercises. 
 - Example of using Scikit-learn Pipelines for Training on AI Platform. ML
 - Example of Tensorflow (Estimator API) training and serving using AI Platform. 
-- PySpark example on Google Cloud Dataproc
 - Examples of using the Machine Learning APIs of GCP. 
 
