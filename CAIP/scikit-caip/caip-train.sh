@@ -1,4 +1,4 @@
-gcloud ai-platform jobs submit training marketing_v1_97s \
+gcloud ai-platform jobs submit training marketing_v1_48 \
    --staging-bucket=gs://huize501 \
    --region=us-central1 \
    --module-name=trainer.task \
