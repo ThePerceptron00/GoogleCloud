@@ -37,10 +37,10 @@ def data_train_test_split(data_df):
 
 def dump_object(object_to_dump, output_path):
 
-  if not gfile.Exists(output_path):
+  if not tf.io.gfile.exists(output_path):
     gfile.MakeDirs(os.path.dirname(output_path))
   
-  with gfile.Open(output_path, 'w') as wf:
+  with tf.io.gfile.GFile(output_path, 'w') as wf:
     joblib.dump(object_to_dump, wf)
 
 def read_df_from_bigquery(full_table_path, project_id=None, num_samples=None):

@@ -9,6 +9,7 @@ from trainer import metadata
 import time
 import os
 from sklearn import model_selection
+import hypertune
 
 def get_args():
     
@@ -44,6 +45,13 @@ def get_args():
                         default=1
                         )
 
+    parser.add_argument('--numberestimators', 
+                        help="Int for the number of estimators. Default is 20",
+                        type=int,
+                        required=False,
+                        default=20
+                        )
+
     arguments = parser.parse_args()
 
     return arguments
@@ -57,6 +65,8 @@ def main():
     output_bucket = args.pathoutput
 
     storage = args.storage
+    
+    numberestimators = args.numberestimators
 
     full_table_path = args.bqtable
 
@@ -67,7 +77,7 @@ def main():
 
     x_train, y_train, x_val, y_val = utils.data_train_test_split(dataset)
 
-    pipeline = model.get_pipeline()
+    pipeline = model.get_pipeline(numberestimators)
    
     pipeline.fit(x_train, y_train)
 
@@ -81,6 +91,15 @@ def main():
 
     utils.dump_object(pipeline, model_output_path)
     utils.dump_object(scores, metric_output_path)
+
+    accuracy = pipeline.score(x_val, y_val)
+
+    hpt = hypertune.HyperTune()
+    hpt.report_hyperparameter_tuning_metric(
+      hyperparameter_metric_tag='accuracy',
+      metric_value=accuracy,
+      global_step=1000
+      )
     
     print("model score: %.3f" % pipeline.score(x_val, y_val))
     print('pipeline run done :)')

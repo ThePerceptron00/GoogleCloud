@@ -14,16 +14,15 @@ from trainer.util import preprocess_utils
 
 from trainer import metadata
 
-def get_estimator():
+def get_estimator(numberestimators):
 
-    classifier = ensemble.RandomForestClassifier(
-        n_estimators=20)
+    classifier = ensemble.RandomForestClassifier(n_estimators=numberestimators)
 
     return classifier
 
-def get_pipeline():
+def get_pipeline(numberestimators):
 
-    classifier = get_estimator()
+    classifier = get_estimator(numberestimators)
 
 
     feature_columns = metadata.FEATURE_COLUMNS

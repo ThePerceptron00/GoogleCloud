@@ -1,0 +1,20 @@
+trainingInput:
+    hyperparameters:
+      goal: MAXIMIZE
+      maxTrials: 8
+      maxParallelTrials: 8
+      hyperparameterMetricTag: accuracy
+      enableTrialEarlyStopping: FALSE 
+      params:
+      - parameterName: numberestimators
+        type: DISCRETE
+        discreteValues: [
+            10, 
+            20, 
+            30, 
+            40, 
+            50,
+            100,
+            150,
+            200
+            ]
