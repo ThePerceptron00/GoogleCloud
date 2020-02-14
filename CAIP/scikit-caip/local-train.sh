@@ -6,5 +6,6 @@ gcloud ai-platform local train \
    --pathoutput gs://erwinh-mldemo/scikit/model \
    --storage BQ \
    --numberestimators 40 \
+   --minsamplesleaf 3 \
    --bqtable erwinh-mldemo.marketing.marketing_propensity_main
 

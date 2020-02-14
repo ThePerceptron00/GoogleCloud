@@ -52,6 +52,13 @@ def get_args():
                         default=20
                         )
 
+    parser.add_argument('--minsamplesleaf', 
+                        help="Specifies the minimum number of samples required to be at a leaf node",
+                        type=int,
+                        required=False,
+                        default=2
+                        )
+
     arguments = parser.parse_args()
 
     return arguments
@@ -77,7 +84,7 @@ def main():
 
     x_train, y_train, x_val, y_val = utils.data_train_test_split(dataset)
 
-    pipeline = model.get_pipeline(numberestimators)
+    pipeline = model.get_pipeline(numberestimators, args.minsamplesleaf)
    
     pipeline.fit(x_train, y_train)
 

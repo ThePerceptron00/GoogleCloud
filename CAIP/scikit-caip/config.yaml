@@ -1,7 +1,7 @@
 trainingInput:
     hyperparameters:
       goal: MAXIMIZE
-      maxTrials: 8
+      maxTrials: 32
       maxParallelTrials: 8
       hyperparameterMetricTag: accuracy
       enableTrialEarlyStopping: FALSE 
@@ -18,3 +18,7 @@ trainingInput:
             150,
             200
             ]
+      - parameterName: minsamplesleaf
+        type: DISCRETE
+        minValue: 1
+        maxValue: 10    

@@ -1,4 +1,4 @@
-gcloud ai-platform jobs submit training marketing_v1_212 \
+gcloud ai-platform jobs submit training marketing_v1_215 \
    --staging-bucket=gs://huize501 \
    --region=us-central1 \
    --module-name=trainer.task \
@@ -10,5 +10,6 @@ gcloud ai-platform jobs submit training marketing_v1_212 \
    --pathdata gs://erwinh-mldemo/scikit/marketing-data.csv \
    --pathoutput gs://erwinh-mldemo/scikit/model \
    --storage BQ \
-   --numberestimators 20 \
+   --numberestimators 40 \
+   --minsamplesleaf 3 \
    --bqtable erwinh-mldemo.marketing.marketing_propensity_main
