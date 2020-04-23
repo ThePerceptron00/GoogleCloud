@@ -20,5 +20,12 @@ trainingInput:
             ]
       - parameterName: minsamplesleaf
         type: DISCRETE
-        minValue: 1
-        maxValue: 10    
+        discreteValues: [
+            1, 
+            2, 
+            4, 
+            6, 
+            8,
+            10,
+            12
+            ]
