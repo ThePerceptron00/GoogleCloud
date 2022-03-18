@@ -12,7 +12,7 @@ You can read data from two different sources:
 #### Local Train
 First you may want to train the model locally. For this you can use the local-train.sh script. But first you need to open the script and change these parameters:
 
-- pathdata: Path to data (if you are using GCS)
+- pathdata: Path to data (if you are using GCS).
 - pathoutput: GCS Bucket to output model.joblib: gs://gcs_path
 - storage: Where your data is stored: GCS or BQ. 
 - bqtable: The full path to your BigQuery table if your data is in a BQ table: yourproject.dataset.table
