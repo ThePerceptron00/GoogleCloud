@@ -15,8 +15,7 @@ CSV_COLUMNS = [
   'pdays',
   'previous',
   'poutcome',
-  'y'             
-  ]
+  'y']
 
 CATEGORICAL_FEATURES = [
   'job',
