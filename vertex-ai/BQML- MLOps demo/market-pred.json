@@ -1,0 +1,4 @@
+
+{"instances": [{"age" :39,"job":"self-employed","marital":"divorced","education":"high.school","defaulted":"no","housing": "no",
+                "loan":"no","contact":"cellular","month":"sep","day_of_week":"tue","duration":261,"campaign":1,"pdays":3,"previous":1,
+                "poutcome":"success","emp_var_rate":-3.4,"cons_price_idx":92.379,"cons_conf_idx":-29.8,"euribor3m":0.788,"nr_employed":5018.5}]}

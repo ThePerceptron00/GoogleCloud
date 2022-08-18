@@ -1,0 +1,609 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-condition-deploy-decision-1": {
+        "dag": {
+          "tasks": {
+            "export-bqml-model": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-export-bqml-model"
+              },
+              "inputs": {
+                "parameters": {
+                  "bucket_name": {
+                    "componentInputParameter": "pipelineparam--bucket_name"
+                  },
+                  "model": {
+                    "componentInputParameter": "pipelineparam--run-bigquery-created_asset"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "export BQ model"
+              }
+            },
+            "model-deploy": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-model-deploy"
+              },
+              "dependentTasks": [
+                "model-upload"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "model": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "model",
+                      "producerTask": "model-upload"
+                    }
+                  }
+                },
+                "parameters": {
+                  "deployed_model_display_name": {
+                    "componentInputParameter": "pipelineparam--model_dispay_name"
+                  },
+                  "location": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "us-central1"
+                      }
+                    }
+                  },
+                  "machine_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "n1-standard-4"
+                      }
+                    }
+                  },
+                  "project": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "model-deploy"
+              }
+            },
+            "model-upload": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-model-upload"
+              },
+              "dependentTasks": [
+                "export-bqml-model"
+              ],
+              "inputs": {
+                "parameters": {
+                  "artifact_uri": {
+                    "taskOutputParameter": {
+                      "outputParameterKey": "destination",
+                      "producerTask": "export-bqml-model"
+                    }
+                  },
+                  "display_name": {
+                    "componentInputParameter": "pipelineparam--model_dispay_name"
+                  },
+                  "location": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "us-central1"
+                      }
+                    }
+                  },
+                  "project": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "serving_container_image_uri": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "us-docker.pkg.dev/vertex-ai/prediction/tf2-cpu.2-3:latest"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "model-upload"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "parameters": {
+            "pipelineparam--bucket_name": {
+              "type": "STRING"
+            },
+            "pipelineparam--eval_threshold_val": {
+              "type": "DOUBLE"
+            },
+            "pipelineparam--evaluate-roc_auc": {
+              "type": "DOUBLE"
+            },
+            "pipelineparam--model_dispay_name": {
+              "type": "STRING"
+            },
+            "pipelineparam--project_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--run-bigquery-created_asset": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-evaluate": {
+        "executorLabel": "exec-evaluate",
+        "inputDefinitions": {
+          "parameters": {
+            "eval_query": {
+              "type": "STRING"
+            },
+            "model_name": {
+              "type": "STRING"
+            },
+            "project_id": {
+              "type": "STRING"
+            },
+            "target_metrics": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "roc_auc": {
+              "type": "DOUBLE"
+            },
+            "trial_id": {
+              "type": "INT"
+            }
+          }
+        }
+      },
+      "comp-export-bqml-model": {
+        "executorLabel": "exec-export-bqml-model",
+        "inputDefinitions": {
+          "parameters": {
+            "bucket_name": {
+              "type": "STRING"
+            },
+            "model": {
+              "type": "STRING"
+            },
+            "project_id": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "destination": {
+              "type": "STRING"
+            },
+            "model_name": {
+              "type": "STRING"
+            }
+          }
+        }
+      },
+      "comp-model-deploy": {
+        "executorLabel": "exec-model-deploy",
+        "inputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "deployed_model_display_name": {
+              "type": "STRING"
+            },
+            "location": {
+              "type": "STRING"
+            },
+            "machine_type": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "endpoint": {
+              "artifactType": {
+                "schemaTitle": "system.Artifact",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-model-upload": {
+        "executorLabel": "exec-model-upload",
+        "inputDefinitions": {
+          "parameters": {
+            "artifact_uri": {
+              "type": "STRING"
+            },
+            "display_name": {
+              "type": "STRING"
+            },
+            "location": {
+              "type": "STRING"
+            },
+            "project": {
+              "type": "STRING"
+            },
+            "serving_container_image_uri": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "model": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-run-bigquery": {
+        "executorLabel": "exec-run-bigquery",
+        "inputDefinitions": {
+          "parameters": {
+            "location": {
+              "type": "STRING"
+            },
+            "project_id": {
+              "type": "STRING"
+            },
+            "query_string": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "parameters": {
+            "created_asset": {
+              "type": "STRING"
+            },
+            "query": {
+              "type": "STRING"
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-evaluate": {
+          "container": {
+            "args": [
+              "--project-id",
+              "{{$.inputs.parameters['project_id']}}",
+              "--model-name",
+              "{{$.inputs.parameters['model_name']}}",
+              "--eval-query",
+              "{{$.inputs.parameters['eval_query']}}",
+              "--target-metrics",
+              "{{$.inputs.parameters['target_metrics']}}",
+              "----output-paths",
+              "{{$.outputs.parameters['trial_id'].output_file}}",
+              "{{$.outputs.parameters['roc_auc'].output_file}}"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "(PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-bigquery' 'pandas' 'pyarrow' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-bigquery' 'pandas' 'pyarrow' --user) && \"$0\" \"$@\"",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp)\nprintf \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+              "def evaluate(project_id, model_name, eval_query, target_metrics):\n    query = eval_query\n    print(query)\n    from google.cloud import bigquery\n    bqclient = bigquery.Client(project=project_id, location='US')\n    results = bqclient.query(query).result().to_dataframe()\n\n    target_metrics= list(target_metrics.split(\",\")) # converts target metrics back to list\n    keyresults= results[target_metrics]\n    return list(keyresults.itertuples(name='Outputs', index=False))[0]\n\ndef _serialize_float(float_value: float) -> str:\n    if isinstance(float_value, str):\n        return float_value\n    if not isinstance(float_value, (float, int)):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of float.'.format(\n            str(float_value), str(type(float_value))))\n    return str(float_value)\n\ndef _serialize_int(int_value: int) -> str:\n    if isinstance(int_value, str):\n        return int_value\n    if not isinstance(int_value, int):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of int.'.format(\n            str(int_value), str(type(int_value))))\n    return str(int_value)\n\nimport argparse\n_parser = argparse.ArgumentParser(prog='Evaluate', description='')\n_parser.add_argument(\"--project-id\", dest=\"project_id\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--model-name\", dest=\"model_name\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--eval-query\", dest=\"eval_query\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--target-metrics\", dest=\"target_metrics\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"----output-paths\", dest=\"_output_paths\", type=str, nargs=2)\n_parsed_args = vars(_parser.parse_args())\n_output_files = _parsed_args.pop(\"_output_paths\", [])\n\n_outputs = evaluate(**_parsed_args)\n\n_output_serializers = [\n    _serialize_int,\n    _serialize_float,\n\n]\n\nimport os\nfor idx, output_file in enumerate(_output_files):\n    try:\n        os.makedirs(os.path.dirname(output_file))\n    except OSError:\n        pass\n    with open(output_file, 'w') as f:\n        f.write(_output_serializers[idx](_outputs[idx]))\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-export-bqml-model": {
+          "container": {
+            "args": [
+              "--project-id",
+              "{{$.inputs.parameters['project_id']}}",
+              "--model",
+              "{{$.inputs.parameters['model']}}",
+              "--bucket-name",
+              "{{$.inputs.parameters['bucket_name']}}",
+              "----output-paths",
+              "{{$.outputs.parameters['model_name'].output_file}}",
+              "{{$.outputs.parameters['destination'].output_file}}"
+            ],
+            "command": [
+              "sh",
+              "-ec",
+              "program_path=$(mktemp)\nprintf \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+              "def export_bqml_model(project_id, model, bucket_name):\n    import subprocess\n    import shutil\n    #bq extract -m {PROJECT_ID}:{DATASET_NAME}.{MODEL_NAME} gs://{BUCKET_NAME}/{MODEL_NAME}\n    model_name = '{}:{}'.format(project_id, model)\n    destination = 'gs://{}/{}'.format(bucket_name, model)\n    print (model_name)\n\n    subprocess.run(\n        (\n            shutil.which(\"bq\"),\n            \"extract\",\n            \"--project_id=\" + project_id,\n            \"-m\",\n            model_name,\n            destination\n        ),\n        stderr=subprocess.PIPE,\n        check=True)\n    return (model, destination)\n\ndef _serialize_str(str_value: str) -> str:\n    if not isinstance(str_value, str):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of str.'.format(\n            str(str_value), str(type(str_value))))\n    return str_value\n\nimport argparse\n_parser = argparse.ArgumentParser(prog='Export bqml model', description='')\n_parser.add_argument(\"--project-id\", dest=\"project_id\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--model\", dest=\"model\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--bucket-name\", dest=\"bucket_name\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"----output-paths\", dest=\"_output_paths\", type=str, nargs=2)\n_parsed_args = vars(_parser.parse_args())\n_output_files = _parsed_args.pop(\"_output_paths\", [])\n\n_outputs = export_bqml_model(**_parsed_args)\n\n_output_serializers = [\n    _serialize_str,\n    _serialize_str,\n\n]\n\nimport os\nfor idx, output_file in enumerate(_output_files):\n    try:\n        os.makedirs(os.path.dirname(output_file))\n    except OSError:\n        pass\n    with open(output_file, 'w') as f:\n        f.write(_output_serializers[idx](_outputs[idx]))\n"
+            ],
+            "image": "gcr.io/veretxai-demo-ce-apac/bq_vertexai_container:latest"
+          }
+        },
+        "exec-model-deploy": {
+          "container": {
+            "args": [
+              "--init.project",
+              "{{$.inputs.parameters['project']}}",
+              "--init.location",
+              "{{$.inputs.parameters['location']}}",
+              "--init.model_name",
+              "{{$.inputs.artifacts['model'].uri}}",
+              "--method.deployed_model_display_name",
+              "{{$.inputs.parameters['deployed_model_display_name']}}",
+              "--method.machine_type",
+              "{{$.inputs.parameters['machine_type']}}",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['endpoint'].uri}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.remote.aiplatform.remote_runner",
+              "--cls_name",
+              "Model",
+              "--method_name",
+              "deploy"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:latest"
+          }
+        },
+        "exec-model-upload": {
+          "container": {
+            "args": [
+              "--method.project",
+              "{{$.inputs.parameters['project']}}",
+              "--method.location",
+              "{{$.inputs.parameters['location']}}",
+              "--method.display_name",
+              "{{$.inputs.parameters['display_name']}}",
+              "--method.serving_container_image_uri",
+              "{{$.inputs.parameters['serving_container_image_uri']}}",
+              "--method.artifact_uri",
+              "{{$.inputs.parameters['artifact_uri']}}",
+              "--executor_input",
+              "{{$}}",
+              "--resource_name_output_artifact_uri",
+              "{{$.outputs.artifacts['model'].uri}}"
+            ],
+            "command": [
+              "python3",
+              "-m",
+              "google_cloud_pipeline_components.remote.aiplatform.remote_runner",
+              "--cls_name",
+              "Model",
+              "--method_name",
+              "upload"
+            ],
+            "image": "gcr.io/ml-pipeline/google-cloud-pipeline-components:latest"
+          }
+        },
+        "exec-run-bigquery": {
+          "container": {
+            "args": [
+              "--project-id",
+              "{{$.inputs.parameters['project_id']}}",
+              "--query-string",
+              "{{$.inputs.parameters['query_string']}}",
+              "--location",
+              "{{$.inputs.parameters['location']}}",
+              "----output-paths",
+              "{{$.outputs.parameters['created_asset'].output_file}}",
+              "{{$.outputs.parameters['query'].output_file}}"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "(PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-bigquery' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location 'google-cloud-bigquery' --user) && \"$0\" \"$@\"",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp)\nprintf \"%s\" \"$0\" > \"$program_path\"\npython3 -u \"$program_path\" \"$@\"\n",
+              "def run_bigquery(project_id, query_string, location):\n    \"\"\"\n    Runs BigQuery query and returns a table/model name\n    \"\"\"\n    print(query_string)\n\n    from google.cloud import bigquery\n    from google.api_core.future import polling\n    from google.cloud import bigquery\n    from google.cloud.bigquery import retry as bq_retry\n\n    bqclient = bigquery.Client(project=project_id, location=location)\n    job = bqclient.query(query_string, retry=bq_retry.DEFAULT_RETRY)\n    job._retry = polling.DEFAULT_RETRY\n\n    while job.running():\n        from time import sleep\n        sleep(0.1)\n        print('Running ...')\n\n    tblname = job.ddl_target_table\n    tblname = '{}.{}'.format(tblname.dataset_id, tblname.table_id)\n    print('{} created in {}'.format(tblname, job.ended - job.started))\n\n    from collections import namedtuple\n    result_tuple = namedtuple('DDLOutput', ['created_asset', 'query'])\n    return result_tuple(tblname, query_string)\n\ndef _serialize_str(str_value: str) -> str:\n    if not isinstance(str_value, str):\n        raise TypeError('Value \"{}\" has type \"{}\" instead of str.'.format(\n            str(str_value), str(type(str_value))))\n    return str_value\n\nimport argparse\n_parser = argparse.ArgumentParser(prog='Run bigquery', description='Runs BigQuery query and returns a table/model name')\n_parser.add_argument(\"--project-id\", dest=\"project_id\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--query-string\", dest=\"query_string\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"--location\", dest=\"location\", type=str, required=True, default=argparse.SUPPRESS)\n_parser.add_argument(\"----output-paths\", dest=\"_output_paths\", type=str, nargs=2)\n_parsed_args = vars(_parser.parse_args())\n_output_files = _parsed_args.pop(\"_output_paths\", [])\n\n_outputs = run_bigquery(**_parsed_args)\n\n_output_serializers = [\n    _serialize_str,\n    _serialize_str,\n\n]\n\nimport os\nfor idx, output_file in enumerate(_output_files):\n    try:\n        os.makedirs(os.path.dirname(output_file))\n    except OSError:\n        pass\n    with open(output_file, 'w') as f:\n        f.write(_output_serializers[idx](_outputs[idx]))\n"
+            ],
+            "image": "python:3.7"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "bq-cl-vizier-xai-pipeline"
+    },
+    "root": {
+      "dag": {
+        "tasks": {
+          "condition-deploy-decision-1": {
+            "componentRef": {
+              "name": "comp-condition-deploy-decision-1"
+            },
+            "dependentTasks": [
+              "evaluate",
+              "run-bigquery"
+            ],
+            "inputs": {
+              "parameters": {
+                "pipelineparam--bucket_name": {
+                  "componentInputParameter": "bucket_name"
+                },
+                "pipelineparam--eval_threshold_val": {
+                  "componentInputParameter": "eval_threshold_val"
+                },
+                "pipelineparam--evaluate-roc_auc": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "roc_auc",
+                    "producerTask": "evaluate"
+                  }
+                },
+                "pipelineparam--model_dispay_name": {
+                  "componentInputParameter": "model_dispay_name"
+                },
+                "pipelineparam--project_id": {
+                  "componentInputParameter": "project_id"
+                },
+                "pipelineparam--run-bigquery-created_asset": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "created_asset",
+                    "producerTask": "run-bigquery"
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-deploy-decision-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--evaluate-roc_auc'].double_value > inputs.parameters['pipelineparam--eval_threshold_val'].double_value"
+            }
+          },
+          "evaluate": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-evaluate"
+            },
+            "dependentTasks": [
+              "run-bigquery"
+            ],
+            "inputs": {
+              "parameters": {
+                "eval_query": {
+                  "componentInputParameter": "eval_query"
+                },
+                "model_name": {
+                  "taskOutputParameter": {
+                    "outputParameterKey": "created_asset",
+                    "producerTask": "run-bigquery"
+                  }
+                },
+                "project_id": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "veretxai-demo-ce-apac"
+                    }
+                  }
+                },
+                "target_metrics": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "trial_id,roc_auc"
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "evaluate"
+            }
+          },
+          "run-bigquery": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-run-bigquery"
+            },
+            "inputs": {
+              "parameters": {
+                "location": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "US"
+                    }
+                  }
+                },
+                "project_id": {
+                  "componentInputParameter": "project_id"
+                },
+                "query_string": {
+                  "componentInputParameter": "model_query"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "create BQ model"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "bucket_name": {
+            "type": "STRING"
+          },
+          "eval_query": {
+            "type": "STRING"
+          },
+          "eval_threshold_metric": {
+            "type": "STRING"
+          },
+          "eval_threshold_val": {
+            "type": "DOUBLE"
+          },
+          "model_dispay_name": {
+            "type": "STRING"
+          },
+          "model_query": {
+            "type": "STRING"
+          },
+          "project_id": {
+            "type": "STRING"
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.5"
+  },
+  "runtimeConfig": {
+    "parameters": {
+      "bucket_name": {
+        "stringValue": "veretxai-demo-ce-apac_cl_model_willbuy"
+      },
+      "eval_query": {
+        "stringValue": "\nSELECT *\nFROM\n  ML.EVALUATE(MODEL marketing_data.vertex_cl_willbuy_hp_xai)\nORDER BY  roc_auc desc \nLIMIT 1"
+      },
+      "eval_threshold_metric": {
+        "stringValue": "roc_auc"
+      },
+      "eval_threshold_val": {
+        "doubleValue": 0.8
+      },
+      "model_dispay_name": {
+        "stringValue": "vertex_cl_willbuy_hp_xai_vai"
+      },
+      "model_query": {
+        "stringValue": "\nCREATE OR REPLACE MODEL `marketing_data.vertex_cl_willbuy_hp_xai`\nOPTIONS(\n    model_type='logistic_reg',\n    labels = ['y'],\n    num_trials=10,\n    max_parallel_trials=2,\n    HPARAM_TUNING_ALGORITHM = 'VIZIER_DEFAULT',\n    ENABLE_GLOBAL_EXPLAIN = True\n    )\nAS \nSELECT * \nFROM `marketing_data.training` \n"
+      },
+      "project_id": {
+        "stringValue": "veretxai-demo-ce-apac"
+      }
+    }
+  }
+}
